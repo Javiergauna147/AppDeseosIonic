@@ -1,5 +1,7 @@
+import { CATCH_STACK_VAR } from '@angular/compiler/src/output/output_ast';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { AlertController } from '@ionic/angular';
 import { DeseosService } from '../../services/deseos.service';
 
 @Component({
@@ -10,10 +12,43 @@ import { DeseosService } from '../../services/deseos.service';
 export class Tab1Page {
 
   constructor( public deseosService: DeseosService,
-               private router: Router ) {}
+               private router: Router,
+               private alertCtrl: AlertController ) {}
 
-  agregarLista() {
-    this.router.navigateByUrl(`/tabs/tab1/agregar`);
+  async agregarLista() {
+    // this.router.navigateByUrl(`/tabs/tab1/agregar`);
+    const alert = await this.alertCtrl.create({
+      header: 'Nueva Lista',
+      inputs: [
+        {
+          name: 'titulo',
+          type: 'text',
+          placeholder: 'Nombre de la lista'
+        }
+      ],
+      buttons: [
+        {
+          text: 'cancelar',
+          role: 'cancel',
+          handler: () => {
+            console.log('cancelar');
+          }
+        },
+        {
+          text: 'crear',
+          handler: (data) => {
+            console.log(data);
+            if( data.titulo.length === 0 ){
+              return;
+            }
+            //Crear lista
+            this.deseosService.crearLista( data.titulo );
+          }
+        }
+      ]
+    });
+
+    alert.present();
   }
 
 }
